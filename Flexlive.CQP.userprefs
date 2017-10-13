@@ -1,0 +1,15 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workbench ActiveDocument="src/Flexlive.CQP.CSharpPlugins.Demo/ZJH/Room.cs">
+    <Files>
+      <File FileName="src/Flexlive.CQP.CSharpPlugins.Demo/ZJH/Player.cs" Line="54" Column="37" />
+      <File FileName="src/Flexlive.CQP.CSharpPlugins.Demo/CQX.cs" Line="468" Column="3" />
+      <File FileName="src/Flexlive.CQP.CSharpPlugins.Demo/ZJH/Room.cs" Line="41" Column="21" />
+      <File FileName="src/Flexlive.CQP.CSharpPlugins.Demo/ZJH/Hall.cs" Line="44" Column="18" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
