@@ -45,7 +45,7 @@ namespace RD.ZJH
 		{
 			if (whoseTurn.id != playerID || whoseTurn.money < price)
 				return;
-			whoseTurn.Cost(price);
+			whoseTurn.Follow(price);
 			TurnNext();
 		}
 
@@ -72,8 +72,8 @@ namespace RD.ZJH
 			if (players.Count(a => !a.isDroped) > 1)
 				return;
 			state = State.End;
-			var winner = players.First(a => a.isDroped = false);
-			winner.Gain(totalPrice);
+			var winner = players.Find(a => a.isDroped = false);
+			winner.Win(totalPrice);
 		}
 
 		private void TurnNext()
@@ -86,7 +86,7 @@ namespace RD.ZJH
 
 		public Player GetPlayer(string playerID)
 		{
-			return players.First(a => a.id == playerID);
+			return players.Find(a => a.id == playerID);
 		}
 
 		private Player CreatePlayer(string id)

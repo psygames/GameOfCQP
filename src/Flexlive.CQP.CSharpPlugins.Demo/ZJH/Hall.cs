@@ -19,7 +19,7 @@ namespace RD.ZJH
 
         private void Log(string msg, params string[] parm)
         {
-
+            Console.WriteLine(msg, parm);
         }
 
         public void Join(string playerID)
@@ -30,9 +30,12 @@ namespace RD.ZJH
                 return;
             }
 
-            var room = rooms.First(a => a.state == Room.State.Ready);
+            var room = rooms.Find(a => a.state == Room.State.Ready);
             if (room == null)
+            {
                 room = CreateRoom();
+                rooms.Add(room);
+            }
             room.Join(playerID);
         }
 
@@ -62,7 +65,7 @@ namespace RD.ZJH
         {
             foreach (var room in rooms)
             {
-                return room.players.First(a => a.id == playerID);
+                return room.players.Find(a => a.id == playerID);
             }
             return null;
         }
