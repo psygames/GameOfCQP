@@ -77,7 +77,7 @@ namespace RD.ZJH
 			{
 				string msg = "";
 
-				foreach (var card in p.cards)
+				foreach (var card in cards)
 				{
 					msg += "[" + card.title + "] ";
 				}

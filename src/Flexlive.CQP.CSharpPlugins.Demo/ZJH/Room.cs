@@ -10,7 +10,7 @@ namespace RD.ZJH
 	public class Room
 	{
 		const int MIN_MEMBERS = 2;
-		const int MAX_MEMBERS = 5;
+		const int MAX_MEMBERS = 2;
 		const int TURN_CD = 20;
 
 		public string name;
@@ -34,7 +34,8 @@ namespace RD.ZJH
 			players.Add(player);
 			whoseTurn = GetPlayer(playerID);
 			SendStatusToAll();
-		}
+            CheckStart();
+        }
 
 		public Player whoseTurn { get; private set; }
 
@@ -162,28 +163,35 @@ namespace RD.ZJH
 				TurnNext();
 		}
 
-		private float m_lastTurnCD = 0;
 		public void Update()
 		{
-			if (state != State.Playing)
-				return;
-			m_turnCD -= Time.delta;
-
-			if (m_turnCD < 10
-				&& (int)m_lastTurnCD != (int)m_turnCD
-				&& ((int)m_turnCD % 2) == 0)
-			{
-				string msg = whoseTurn.name + " LeftTime: " + (int)m_turnCD; e
-				SendMsgToAll(msg);
-			}
-
-			if (m_turnCD < 0)
-			{
-				TurnNext();
-			}
-
-			m_lastTurnCD = m_turnCD;
+            CheckStart();
+            UpdateTurn();
 		}
+
+        private float m_lastTurnCD = 0;
+
+        private void UpdateTurn()
+        {
+            if (state != State.Playing)
+                return;
+            m_turnCD -= Time.delta;
+
+            if (m_turnCD < 10
+                && (int)m_lastTurnCD != (int)m_turnCD
+                && ((int)m_turnCD % 2) == 0)
+            {
+                string msg = whoseTurn.name + " LeftTime: " + (int)m_turnCD;
+                SendMsgToAll(msg);
+            }
+
+            if (m_turnCD < 0)
+            {
+                TurnNext();
+            }
+
+            m_lastTurnCD = m_turnCD;
+        }
 
 		public enum State
 		{
