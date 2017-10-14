@@ -9,8 +9,9 @@ namespace RD.ZJH
 {
 	public class Room
 	{
-		const int MIN_MEMBERS = 3;
+		const int MIN_MEMBERS = 2;
 		const int MAX_MEMBERS = 5;
+		const int TURN_CD = 20;
 
 		public string name;
 		public State state = State.Ready;
@@ -20,6 +21,7 @@ namespace RD.ZJH
 		public int totalPrice = 0;
 
 		private float createTime = 0;
+		private float m_turnCD = 0;
 
 		public Room()
 		{
@@ -31,7 +33,7 @@ namespace RD.ZJH
 			var player = CreatePlayer(playerID);
 			players.Add(player);
 			whoseTurn = GetPlayer(playerID);
-			ReplyStatusToAll();
+			SendStatusToAll();
 		}
 
 		public Player whoseTurn { get; private set; }
@@ -82,6 +84,12 @@ namespace RD.ZJH
 			int index = playingPlayers.IndexOf(whoseTurn);
 			index = (index + 1) % playingPlayers.Count;
 			whoseTurn = playingPlayers[index];
+			m_turnCD = TURN_CD;
+
+			if (state == State.Playing)
+			{
+				SendMsgToAll(whoseTurn.name + " Turn");
+			}
 		}
 
 		public Player GetPlayer(string playerID)
@@ -123,6 +131,28 @@ namespace RD.ZJH
 					ids.RemoveAt(index);
 				}
 			}
+			foreach (var player in players)
+			{
+				ShowCards(player.id);
+			}
+		}
+
+
+		public void ShowCards(string playerID)
+		{
+			var p = GetPlayer(playerID);
+			p.SendMsg(p.cardsMsg);
+		}
+
+		public void ShowPK(Player from, Player to)
+		{
+			string msg = string.Format("{0} PK {1}\n({2} PK {3})\n", from.name, to.name, from.cardsMsg, to.cardsMsg);
+			if (from.CheckPK(to))
+				msg += "WIN";
+			else
+				msg += "LOSE";
+			from.SendMsg(msg);
+			to.SendMsg(msg);
 		}
 
 		public void Drop(string playerID)
@@ -132,10 +162,27 @@ namespace RD.ZJH
 				TurnNext();
 		}
 
-
+		private float m_lastTurnCD = 0;
 		public void Update()
 		{
+			if (state != State.Playing)
+				return;
+			m_turnCD -= Time.delta;
 
+			if (m_turnCD < 10
+				&& (int)m_lastTurnCD != (int)m_turnCD
+				&& ((int)m_turnCD % 2) == 0)
+			{
+				string msg = whoseTurn.name + " LeftTime: " + (int)m_turnCD; e
+				SendMsgToAll(msg);
+			}
+
+			if (m_turnCD < 0)
+			{
+				TurnNext();
+			}
+
+			m_lastTurnCD = m_turnCD;
 		}
 
 		public enum State
@@ -145,11 +192,16 @@ namespace RD.ZJH
 			End,
 		}
 
-		private void ReplyStatusToAll()
+		private void SendStatusToAll()
+		{
+			SendMsgToAll(status);
+		}
+
+		public void SendMsgToAll(string msg)
 		{
 			foreach (var player in players)
 			{
-				player.Reply(status);
+				player.SendMsg(msg);
 			}
 		}
 
