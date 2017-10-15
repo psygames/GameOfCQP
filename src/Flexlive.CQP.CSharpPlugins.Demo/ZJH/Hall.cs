@@ -44,7 +44,7 @@ namespace RD.ZJH
             var room = new Room();
             room.state = Room.State.Ready;
             room.name = rooms.Count.ToString();
-            room.curPrice = 10;
+            room.curPrice = 1;
             return room;
         }
 
@@ -96,7 +96,7 @@ namespace RD.ZJH
                 {
                     int iVal = 0;
                     if (int.TryParse(value, out iVal))
-                        room.Follow(playerID,iVal);
+                        room.Follow(playerID, iVal);
                 }
             }
 
@@ -123,7 +123,7 @@ namespace RD.ZJH
             {
                 playerMoneyDic.Add(playerID, value);
             }
-            return value;
+            return playerMoneyDic[playerID];
         }
 
         public static void SetPlayerMoney(string playerID, int money)

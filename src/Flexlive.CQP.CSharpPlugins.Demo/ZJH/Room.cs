@@ -114,6 +114,7 @@ namespace RD.ZJH
 			{
 				state = State.Playing;
 				SendCards();
+				SendStatusToAll();
 			}
 		}
 
@@ -223,6 +224,11 @@ namespace RD.ZJH
 				}
 				else if (state == State.Playing)
 				{
+					string msg = "";
+					foreach(var p in players)
+					{
+						msg += "".FormatStr("");
+					}
 					return string.Format(
 						"TURN: {0}\nAward: {1}\nPrice: {2}",
 						whoseTurn.name,
