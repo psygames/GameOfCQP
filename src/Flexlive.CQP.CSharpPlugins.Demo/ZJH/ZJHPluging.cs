@@ -12,7 +12,7 @@ namespace RD.ZJH
             // var img = CQX.CQCode_Image(@"C:\Users\Yin\Desktop\图\2015-12-25\修改体验\hint_get_diamond_big.png");
             // CQX.SendPrivateMessage(fromQQ, img);
 
-            Hall.instance.ProcessMsg(fromQQ.ToString(), msg);
+            HallProxy.instance.ProcessMsg(fromQQ.ToString(), msg);
         }
 
         public void FriendAdded(int subType, int sendTime, long fromQQ)

@@ -66,17 +66,19 @@
     <Compile Include="MyPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Time.cs" />
-    <Compile Include="ZJH\Card.cs" />
-    <Compile Include="ZJH\Hall.cs" />
+    <Compile Include="ZJH\Data\Card.cs" />
+    <Compile Include="ZJH\Proxy\HallProxy.cs" />
+    <Compile Include="ZJH\Proxy\MatchPool.cs" />
     <Compile Include="ZJH\ZJHPluging.cs" />
-    <Compile Include="ZJH\Player.cs" />
-    <Compile Include="ZJH\Room.cs" />
+    <Compile Include="ZJH\Data\Player.cs" />
+    <Compile Include="ZJH\Data\Room.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FormSettings.resx">
       <DependentUpon>FormSettings.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy  /C /I /R /Y  $(TargetPath) $(TargetDir)CSharpPlugins\

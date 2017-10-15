@@ -25,7 +25,7 @@ namespace RD.ZJH
 
 		public Room()
 		{
-			createTime = Time.current;
+			createTime = Time.current; 
 		}
 
 		public void Join(string playerID)
@@ -38,6 +38,11 @@ namespace RD.ZJH
         }
 
 		public Player whoseTurn { get; private set; }
+
+        public void Ready(string playerID)
+        {
+
+        }
 
 		public void Follow(string playerID)
 		{
@@ -87,7 +92,7 @@ namespace RD.ZJH
 			whoseTurn = playingPlayers[index];
 			m_turnCD = TURN_CD;
 
-			if (state == State.Playing)
+			if (state == State.Gaming)
 			{
 				SendMsgToAll(whoseTurn.name + " Turn");
 			}
@@ -112,7 +117,7 @@ namespace RD.ZJH
 			if (Time.current - createTime > 60 && players.Count >= MIN_MEMBERS
 				|| players.Count >= MAX_MEMBERS)
 			{
-				state = State.Playing;
+				state = State.Gaming;
 				SendCards();
 				SendStatusToAll();
 			}
@@ -174,7 +179,7 @@ namespace RD.ZJH
 
         private void UpdateTurn()
         {
-            if (state != State.Playing)
+            if (state != State.Gaming)
                 return;
             m_turnCD -= Time.delta;
 
@@ -197,8 +202,8 @@ namespace RD.ZJH
 		public enum State
 		{
 			Ready,
-			Playing,
-			End,
+			Gaming,
+            Dismiss,
 		}
 
 		private void SendStatusToAll()
@@ -222,7 +227,7 @@ namespace RD.ZJH
 				{
 					return string.Format("waiting({0})...", players.Count);
 				}
-				else if (state == State.Playing)
+				else if (state == State.Gaming)
 				{
 					string msg = "";
 					foreach(var p in players)

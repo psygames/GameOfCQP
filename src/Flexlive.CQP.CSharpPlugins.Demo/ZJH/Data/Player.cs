@@ -9,7 +9,7 @@ namespace RD.ZJH
 	{
 		public string id;
 		public List<Card> cards = new List<Card>();
-		public int money { get { return Hall.GetPlayerMoney(id); } }
+		public int money { get { return HallProxy.GetPlayerMoney(id); } }
 		public Room room;
 		public bool isDroped = false;
 
@@ -17,12 +17,12 @@ namespace RD.ZJH
 		{
 			room.curPrice = price;
 			room.totalPrice += price;
-			Hall.SetPlayerMoney(id, money - price);
+			HallProxy.SetPlayerMoney(id, money - price);
 		}
 
 		public void Win(int price)
 		{
-			Hall.SetPlayerMoney(id, money + price);
+			HallProxy.SetPlayerMoney(id, money + price);
 
 			room.curPrice = 0;
 			room.totalPrice = 0;
@@ -31,18 +31,13 @@ namespace RD.ZJH
 		public bool PK(Player target)
 		{
 			room.totalPrice += room.curPrice * 2;
-			Hall.SetPlayerMoney(id, money - room.curPrice * 2);
+			HallProxy.SetPlayerMoney(id, money - room.curPrice * 2);
 			return CheckPK(target);
 		}
 
 		public bool CheckPK(Player target)
 		{
 			return false;
-		}
-
-		public void Update()
-		{
-
 		}
 
 		public void Drop()
