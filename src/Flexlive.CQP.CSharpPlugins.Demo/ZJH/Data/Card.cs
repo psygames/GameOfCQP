@@ -18,10 +18,11 @@ namespace RD.ZJH
 
         public enum Type
         {
-            Hon = 1,
+            None = 0,
+            Fan = 1,
             Mei = 2,
-            Hei = 3,
-            Fan = 4,
+            Hon = 3,
+            Hei = 4,
             BIG_JK = 5,
             SMALL_JK = 6,
         }
@@ -35,14 +36,13 @@ namespace RD.ZJH
 
 
 
-
-
         /// <summary>
-        /// 1-54 黑{2-A}，红{2-A}，梅{2-A}，方{2-A}，{JK2}，{JK1}
+        /// 1-54 [2-A(方，梅，红, 黑)]，JK_SMALL，JK_BIG
         /// </summary>
         /// <param name="id"></param>
         public Card(int id)
         {
+            this.id = id;
             if (id == 53)
             {
                 type = Type.SMALL_JK;
@@ -54,8 +54,24 @@ namespace RD.ZJH
             }
             else
             {
-                type = (Type)((id - 1) / 13 + 1);
-                num = (Num)((id - 1) % 13 + 1);
+                num = (Num)((id - 1) / 4 + 1);
+                type = (Type)((id - 1) % 4 + 1);
+            }
+        }
+
+        public string typeImgCode
+        {
+            get
+            {
+                if (type == Type.Hei)
+                    return CQX.CQCode_Image("spade.png");
+                else if (type == Type.Hon)
+                    return CQX.CQCode_Image("heart.png");
+                else if (type == Type.Mei)
+                    return CQX.CQCode_Image("club.png");
+                else if (type == Type.Fan)
+                    return CQX.CQCode_Image("diamond.png");
+                return type.ToString();
             }
         }
 
@@ -69,7 +85,7 @@ namespace RD.ZJH
                     return "SMALL_JK";
                 else
                 {
-                    return type + " " + num.ToString().Trim('_');
+                    return typeImgCode + num.ToString().Trim('_');
                 }
             }
         }

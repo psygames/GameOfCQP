@@ -9,11 +9,12 @@ namespace RD.ZJH
     {
         public List<string> m_waitings = new List<string>();
         public List<List<string>> m_matcheds = new List<List<string>>();
-        private const int MATCH_COUNT = 2;
+        private const int MATCH_COUNT = 3;
 
         public void Add(string id)
         {
-            m_waitings.Add(id);
+            if (!m_waitings.Contains(id))
+                m_waitings.Add(id);
         }
 
         public void Update()
@@ -37,9 +38,13 @@ namespace RD.ZJH
 
         public List<string> GetMatched()
         {
-            var tmp = m_matcheds[0];
-            m_matcheds.RemoveAt(0);
-            return tmp;
+            if (m_matcheds.Count > 0)
+            {
+                var tmp = m_matcheds[0];
+                m_matcheds.RemoveAt(0);
+                return tmp;
+            }
+            return null;
         }
     }
 }

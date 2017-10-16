@@ -29,7 +29,7 @@ namespace Flexlive.CQP.CSharpPlugins.Demo
         public override void Startup()
         {
             //完成插件线程、全局变量等自身运行所必须的初始化工作。
-
+            RD.ZJH.TimerLogic.instance.Init();
         }
 
         /// <summary>

@@ -69,6 +69,7 @@
     <Compile Include="ZJH\Data\Card.cs" />
     <Compile Include="ZJH\Proxy\HallProxy.cs" />
     <Compile Include="ZJH\Proxy\MatchPool.cs" />
+    <Compile Include="ZJH\Proxy\TimerLogic.cs" />
     <Compile Include="ZJH\ZJHPluging.cs" />
     <Compile Include="ZJH\Data\Player.cs" />
     <Compile Include="ZJH\Data\Room.cs" />

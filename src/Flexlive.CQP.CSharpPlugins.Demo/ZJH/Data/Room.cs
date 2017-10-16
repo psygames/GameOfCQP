@@ -7,173 +7,195 @@ using System.Collections;
 
 namespace RD.ZJH
 {
-	public class Room
-	{
-		const int MIN_MEMBERS = 2;
-		const int MAX_MEMBERS = 2;
-		const int TURN_CD = 20;
+    public class Room
+    {
+        const int TURN_CD = 30;
 
-		public string name;
-		public State state = State.Ready;
-		public List<Player> players = new List<Player>();
+        public string name;
+        public State state = State.Ready;
+        public List<Player> players = new List<Player>();
 
-		public int curPrice = 0;
-		public int totalPrice = 0;
+        private float createTime = 0;
+        private float m_turnCD = 0;
+        private MoneyPool moneyPool = new MoneyPool();
 
-		private float createTime = 0;
-		private float m_turnCD = 0;
-
-		public Room()
-		{
-			createTime = Time.current; 
-		}
-
-		public void Join(string playerID)
-		{
-			var player = CreatePlayer(playerID);
-			players.Add(player);
-			whoseTurn = GetPlayer(playerID);
-			SendStatusToAll();
-            CheckStart();
+        public Room()
+        {
+            createTime = Time.current;
         }
 
-		public Player whoseTurn { get; private set; }
+        public void Reset()
+        {
+            state = State.Ready;
+            int num = 1;
+            foreach (var player in players)
+            {
+                player.Reset(num++);
+            }
+
+            SendRoundBegin();
+        }
+
+        public void Join(string playerID)
+        {
+            var player = CreatePlayer(playerID);
+            players.Add(player);
+        }
+
+        public Player whoseTurn { get; private set; }
 
         public void Ready(string playerID)
         {
-
+            if (state == State.Ready
+                || state == State.Dismiss)
+            {
+                var player = GetPlayer(playerID);
+                player.Ready();
+                SendReady(player);
+                CheckStart();
+            }
         }
 
-		public void Follow(string playerID)
-		{
-			Follow(playerID, curPrice);
-		}
+        public void Quit(string playerID)
+        {
+            if (state == State.Ready
+                || state == State.Dismiss)
+            {
+                var quiter = GetPlayer(playerID);
+                SendQuit(quiter);
+                players.Remove(quiter);
+                state = State.Dismiss;
+            }
+        }
 
-		public void Follow(string playerID, int price)
-		{
-			if (whoseTurn.id != playerID || whoseTurn.money < price)
-				return;
-			whoseTurn.Follow(price);
-			TurnNext();
-		}
+        public void Follow(string playerID)
+        {
+            Follow(playerID, -1);
+        }
 
-		public void PK(string fromID, string toID)
-		{
-			var from = GetPlayer(fromID);
-			var to = GetPlayer(toID);
+        public void Follow(string playerID, int price)
+        {
+            if (whoseTurn.id != playerID || whoseTurn.money < price)
+                return;
+            moneyPool.Follow(playerID, price);
+            SendFollow(whoseTurn, moneyPool.price);
+            TurnNext();
+        }
 
-			if (whoseTurn != from || to == null || from.money < curPrice * 2)
-				return;
+        public void PK(string fromID, string toID)
+        {
+            if (state != State.Gaming)
+                return;
 
-			bool isWin = from.PK(to);
-			if (isWin) to.Drop();
-			else from.Drop();
-			CheckEnd();
-			if (state != State.End)
-			{
-				TurnNext();
-			}
-		}
+            var from = GetPlayer(fromID);
+            var to = GetPlayer(toID);
 
-		private void CheckEnd()
-		{
-			if (players.Count(a => !a.isDroped) > 1)
-				return;
-			state = State.End;
-			var winner = players.Find(a => a.isDroped = false);
-			winner.Win(totalPrice);
-		}
+            int cost = moneyPool.price * 2;
+            if (whoseTurn != from || to == null || to.isDroped || from.money < cost)
+                return;
 
-		private void TurnNext()
-		{
-			var playingPlayers = players.FindAll(a => a.isDroped = false);
-			int index = playingPlayers.IndexOf(whoseTurn);
-			index = (index + 1) % playingPlayers.Count;
-			whoseTurn = playingPlayers[index];
-			m_turnCD = TURN_CD;
+            bool isWin = from.PK(to);
+            if (isWin) to.Drop();
+            else from.Drop();
+            SendPK(from, to);
+            CheckEnd();
+            TurnNext();
+        }
 
-			if (state == State.Gaming)
-			{
-				SendMsgToAll(whoseTurn.name + " Turn");
-			}
-		}
+        private void CheckStart()
+        {
+            if (state == State.Ready
+                && players.All(a => a.isReady))
+            {
+                Start();
+            }
+        }
 
-		public Player GetPlayer(string playerID)
-		{
-			return players.Find(a => a.id == playerID);
-		}
+        private void Start()
+        {
+            state = State.Gaming;
+            moneyPool.Reset();
+            moneyPool.TakeBase(this);
+            whoseTurn = players.First();
+            m_turnCD = TURN_CD;
+            SendCards();
+            SendStatusToAll();
+        }
 
-		private Player CreatePlayer(string id)
-		{
-			Player player = new Player();
-			player.id = id;
-			player.room = this;
-			return player;
-		}
+        private void CheckEnd()
+        {
+            if (state != State.Gaming || players.Count(a => !a.isDroped) > 1)
+                return;
+            var winner = players.Find(a => a.isDroped == false);
+            SendResult(winner, moneyPool.total);
+            moneyPool.RewardTo(winner.id);
+            Reset();
+        }
 
+        private void TurnNext()
+        {
+            if (state != State.Gaming)
+                return;
 
-		private void CheckStart()
-		{
-			if (Time.current - createTime > 60 && players.Count >= MIN_MEMBERS
-				|| players.Count >= MAX_MEMBERS)
-			{
-				state = State.Gaming;
-				SendCards();
-				SendStatusToAll();
-			}
-		}
+            var playingPlayers = players.FindAll(a => a.isDroped == false);
+            int index = playingPlayers.IndexOf(whoseTurn);
+            index = (index + 1) % playingPlayers.Count;
+            whoseTurn = playingPlayers[index];
+            m_turnCD = TURN_CD;
+            SendStatusToAll();
+        }
 
-		Random rand = new Random();
-		private void SendCards()
-		{
-			List<int> ids = new List<int>();
-			for (int i = 1; i <= 54; i++) ids.Add(i);
+        public Player GetPlayer(string playerID)
+        {
+            return players.Find(a => a.id == playerID);
+        }
 
-			for (int i = 0; i < 3; i++)
-			{
-				foreach (var player in players)
-				{
-					var index = rand.Next(0, ids.Count);
-					player.TakeCard(ids[index]);
-					ids.RemoveAt(index);
-				}
-			}
-			foreach (var player in players)
-			{
-				ShowCards(player.id);
-			}
-		}
+        private Player CreatePlayer(string id)
+        {
+            Player player = new Player();
+            player.id = id;
+            player.room = this;
+            return player;
+        }
 
 
-		public void ShowCards(string playerID)
-		{
-			var p = GetPlayer(playerID);
-			p.SendMsg(p.cardsMsg);
-		}
 
-		public void ShowPK(Player from, Player to)
-		{
-			string msg = string.Format("{0} PK {1}\n({2} PK {3})\n", from.name, to.name, from.cardsMsg, to.cardsMsg);
-			if (from.CheckPK(to))
-				msg += "WIN";
-			else
-				msg += "LOSE";
-			from.SendMsg(msg);
-			to.SendMsg(msg);
-		}
+        Random rand = new Random();
+        private void SendCards()
+        {
+            List<int> ids = new List<int>();
 
-		public void Drop(string playerID)
-		{
-			GetPlayer(playerID).Drop();
-			if (whoseTurn.id == playerID)
-				TurnNext();
-		}
+            //TODO: jk
+            for (int i = 1; i <= 52; i++) ids.Add(i);
 
-		public void Update()
-		{
+            for (int i = 0; i < 3; i++)
+            {
+                foreach (var player in players)
+                {
+                    var index = rand.Next(0, ids.Count);
+                    player.TakeCard(ids[index]);
+                    ids.RemoveAt(index);
+                }
+            }
+        }
+
+
+        public void Drop(string playerID)
+        {
+            var player = GetPlayer(playerID);
+            player.Drop();
+            SendDrop(player);
+            if (whoseTurn == player)
+                TurnNext();
+            CheckEnd();
+        }
+
+        public void Update()
+        {
             CheckStart();
+            CheckEnd();
             UpdateTurn();
-		}
+        }
 
         private float m_lastTurnCD = 0;
 
@@ -187,67 +209,187 @@ namespace RD.ZJH
                 && (int)m_lastTurnCD != (int)m_turnCD
                 && ((int)m_turnCD % 2) == 0)
             {
-                string msg = whoseTurn.name + " LeftTime: " + (int)m_turnCD;
-                SendMsgToAll(msg);
+                SendTurnCD((int)m_turnCD);
             }
 
             if (m_turnCD < 0)
             {
-                TurnNext();
+                //Atuo Drop
+                Drop(whoseTurn.id);
             }
 
             m_lastTurnCD = m_turnCD;
         }
 
-		public enum State
-		{
-			Ready,
-			Gaming,
+        public enum State
+        {
+            Ready,
+            Gaming,
             Dismiss,
-		}
+        }
 
-		private void SendStatusToAll()
-		{
-			SendMsgToAll(status);
-		}
+        private void SendStatusToAll()
+        {
+            foreach (var player in players)
+            {
+                string msg = status;
+                if (state == State.Gaming)
+                    msg += "\nYour Cards: " + player.cardsMsg;
+                foreach (var _tp in players)
+                {
+                    msg += "\n{0}".FormatStr(_tp.commonStatus);
+                }
+                player.SendMsg(msg);
+            }
+        }
 
-		public void SendMsgToAll(string msg)
-		{
-			foreach (var player in players)
-			{
-				player.SendMsg(msg);
-			}
-		}
+        public void SendMsgToAll(string msg)
+        {
+            foreach (var player in players)
+            {
+                player.SendMsg(msg);
+            }
+        }
+        public void SendPK(Player from, Player to)
+        {
+            string msg = "{0} PK {1} : ".FormatStr(from.name, to.name);
+            if (from.PK(to))
+                msg += "WIN";
+            else
+                msg += "LOSE";
+            SendMsgToAll(msg);
 
-		public string status
-		{
-			get
-			{
-				if (state == State.Ready)
-				{
-					return string.Format("waiting({0})...", players.Count);
-				}
-				else if (state == State.Gaming)
-				{
-					string msg = "";
-					foreach(var p in players)
-					{
-						msg += "".FormatStr("");
-					}
-					return string.Format(
-						"TURN: {0}\nAward: {1}\nPrice: {2}",
-						whoseTurn.name,
-						totalPrice,
-						curPrice
-						);
-				}
-				else if (state == State.End)
-				{
-					return "end.";
-				}
-				return "error status.";
-			}
-		}
+            string privateMsg = "{0} Cards: {1}\n{2} Cards: {3}"
+                .FormatStr(from.name, from.cardsMsg, to.name, to.cardsMsg);
+            from.SendMsg(privateMsg);
+            to.SendMsg(privateMsg);
+        }
 
-	}
+        public void SendFollow(Player player, int price)
+        {
+            SendMsgToAll("{0} Follow {1}.".FormatStr(player.name, price));
+        }
+
+        public void SendDrop(Player player)
+        {
+            SendMsgToAll("{0} Droped.".FormatStr(player.name));
+        }
+        public void SendResult(Player winner, int reward)
+        {
+            SendMsgToAll("{0} Win this Round! Get Reward:{1}".FormatStr(winner.name, reward));
+        }
+
+        private void SendRoundBegin()
+        {
+            SendStatusToAll();
+            SendMsgToAll("please ready or quit.");
+        }
+
+        private void SendReady(Player player)
+        {
+            SendMsgToAll("{0} is Ready!".FormatStr(player.name));
+        }
+
+        public void SendQuit(Player player)
+        {
+            foreach (var _p in players)
+            {
+                if (_p == player)
+                {
+                    _p.SendMsg("Quit Succeed. zjh to rematch...");
+                }
+                else
+                {
+                    string msg = "{0} Quit the Game, if you are Ready we will rematch game for you!"
+                        .FormatStr(player.name);
+                    _p.SendMsg(msg);
+                }
+            }
+        }
+
+        public void SendTurnCD(int cd)
+        {
+            string msg = whoseTurn.name + " Turn CD: " + cd;
+            SendMsgToAll(msg);
+        }
+
+        public string status
+        {
+            get
+            {
+                if (state == State.Ready)
+                {
+                    return "Room[{0}] Wait For Ready...".FormatStr(name);
+                }
+                else if (state == State.Gaming)
+                {
+                    return "TURN: {0}\nMONEY POOL ** {1} **"
+                    .FormatStr(whoseTurn.name, moneyPool.status);
+                }
+                else if (state == State.Dismiss)
+                {
+                    return "Room[{0}] Dismiss.".FormatStr(name);
+                }
+                return "error status.";
+            }
+        }
+
+
+
+    }
+
+    public class MoneyPool
+    {
+        const int BASE_PRICE = 1;
+        public int price { get; private set; }
+        public int total { get; private set; }
+
+        public void Reset()
+        {
+            price = BASE_PRICE;
+        }
+
+        public void TakeBase(Room room)
+        {
+            foreach (var player in room.players)
+            {
+                Follow(player.id, BASE_PRICE);
+            }
+        }
+
+        public void Follow(string playerID, int price = -1)
+        {
+            if (price == -1)
+            {
+                HallProxy.IncrPlayerMoney(playerID, -this.price);
+            }
+            else
+            {
+                this.price = price;
+                HallProxy.IncrPlayerMoney(playerID, -this.price);
+            }
+
+            total += this.price;
+        }
+
+        public void PK(string fromID)
+        {
+            HallProxy.IncrPlayerMoney(fromID, -price * 2);
+            total += price * 2;
+        }
+
+        public void RewardTo(string playerID)
+        {
+            HallProxy.IncrPlayerMoney(playerID, total);
+            total = 0;
+        }
+
+        public string status
+        {
+            get
+            {
+                return "TOTAL: {0}   PRICE: {1}".FormatStr(total, price);
+            }
+        }
+    }
 }
