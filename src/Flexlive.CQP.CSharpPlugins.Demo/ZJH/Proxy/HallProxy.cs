@@ -80,14 +80,14 @@ namespace RD.ZJH
             {
                 Join(playerID);
             }
-            else if (msg == "help" || msg == "?")
-            {
-                string hp = "zjh --- 炸金花";
-                SendMsgTo(playerID, hp);
-            }
 
             if (!HasPlayer(playerID))
             {
+                if (msg == "help" || msg == "?")
+                {
+                    string hp = "zjh --- 炸金花";
+                    SendMsgTo(playerID, hp);
+                }
                 return;
             }
 
