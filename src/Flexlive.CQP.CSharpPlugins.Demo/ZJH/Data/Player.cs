@@ -85,12 +85,12 @@ namespace RD.ZJH
             get
             {
                 if (room.state == Room.State.Ready)
-                    return "NO.{0}, {1}, Money: {2}".FormatStr(num, name, money);
+                    return "序号.{0}, {1}, 狗牌: {2}".FormatStr(num, name, money);
                 else if (room.state == Room.State.Gaming)
                     if (isDroped)
-                        return "NO.{0}, {1}, Money: {2}  Droped!".FormatStr(num, name, money);
+                        return "序号.{0}, {1}, 狗牌: {2}  已弃牌!".FormatStr(num, name, money);
                     else
-                        return "NO.{0}, {1}, Money: {2}".FormatStr(num, name, money);
+                        return "序号.{0}, {1}, 狗牌: {2}".FormatStr(num, name, money);
                 return "";
             }
         }
@@ -100,7 +100,7 @@ namespace RD.ZJH
             get
             {
                 if (room.state == Room.State.Gaming)
-                    return "Cards:{0}".FormatStr(cardsMsg);
+                    return "手牌:{0}".FormatStr(cardsMsg);
                 return "";
             }
         }

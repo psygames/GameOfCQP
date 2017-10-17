@@ -89,7 +89,7 @@ namespace RD.ZJH
                 foreach (var pid in playerMoneyDic.Keys)
                 {
                     var pname = GetName(pid);
-                    rply += "排行.{0} : {1}  狗牌: {2}\n".FormatStr(rank++, pname, GetPlayerMoney(pid));
+                    rply += "{0}.  {1}  狗牌: {2}\n".FormatStr(rank++, pname, GetPlayerMoney(pid));
                     if (rank >= maxCount)
                         break;
                 }
@@ -101,7 +101,7 @@ namespace RD.ZJH
             {
                 if (msg == "help" || msg == "?")
                 {
-                    string hp = "zjh --- 炸金花\nrank --- 狗牌榜\niamsx --- 免费狗牌";
+                    string hp = "zjh --- 咋金花\nrank --- 狗牌榜\niamsx --- 免费狗牌";
                     SendMsgTo(playerID, hp);
                 }
                 else if (msg == "iamsx")
@@ -274,7 +274,7 @@ namespace RD.ZJH
             if (Time.current - m_lastSend > MIN_SEND_INTERVAL && msgQueue.Count > 0)
             {
                 Msg msg = msgQueue.Dequeue();
-                msg.msg = rand.Next(100, 999) + "\n" + msg.msg;
+                // msg.msg = rand.Next(100, 999) + "\n" + msg.msg;
                 CQX.SendPrivateMessage(long.Parse(msg.playerID), msg.msg);
                 m_lastSend = Time.current;
             }

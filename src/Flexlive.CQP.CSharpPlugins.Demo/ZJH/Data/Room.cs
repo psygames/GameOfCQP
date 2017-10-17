@@ -239,7 +239,7 @@ namespace RD.ZJH
             {
                 string msg = status;
                 if (state == State.Gaming)
-                    msg += "\nYour Cards: " + player.cardsMsg;
+                    msg += "\n手持: " + player.cardsMsg;
                 foreach (var _tp in players)
                 {
                     msg += "\n{0}".FormatStr(_tp.commonStatus);
@@ -259,12 +259,12 @@ namespace RD.ZJH
         {
             string msg = "{0} PK {1} : ".FormatStr(from.name, to.name);
             if (from.PK(to))
-                msg += "WIN";
+                msg += "获胜";
             else
-                msg += "LOSE";
+                msg += "失败";
             SendMsgToAll(msg);
 
-            string privateMsg = "{0} Cards: {1}\n{2} Cards: {3}"
+            string privateMsg = "{0} 的手持: {1}\n{2} Cards: {3}"
                 .FormatStr(from.name, from.cardsMsg, to.name, to.cardsMsg);
             from.SendMsg(privateMsg);
             to.SendMsg(privateMsg);
@@ -272,27 +272,27 @@ namespace RD.ZJH
 
         public void SendFollow(Player player, int price)
         {
-            SendMsgToAll("{0} Follow {1}.".FormatStr(player.name, price));
+            SendMsgToAll("{0} 跟 {1} 狗牌.".FormatStr(player.name, price));
         }
 
         public void SendDrop(Player player)
         {
-            SendMsgToAll("{0} Droped.".FormatStr(player.name));
+            SendMsgToAll("{0} 放弃.".FormatStr(player.name));
         }
         public void SendResult(Player winner, int reward)
         {
-            SendMsgToAll("{0} Win this Round! Get Reward:{1}".FormatStr(winner.name, reward));
+            SendMsgToAll("{0} 获得胜利! 获得奖励: {1} 狗牌".FormatStr(winner.name, reward));
         }
 
         private void SendRoundBegin()
         {
             SendStatusToAll();
-            SendMsgToAll("please ready or quit.");
+            SendMsgToAll("请输入 ready 或 quit.");
         }
 
         private void SendReady(Player player)
         {
-            SendMsgToAll("{0} is Ready!".FormatStr(player.name));
+            SendMsgToAll("{0} 已经准备!".FormatStr(player.name));
         }
 
         public void SendQuit(Player player)
@@ -301,11 +301,11 @@ namespace RD.ZJH
             {
                 if (_p == player)
                 {
-                    _p.SendMsg("Quit Succeed. zjh to rematch...");
+                    _p.SendMsg("退出房间成功. 输入 zjh 重新开始游戏...");
                 }
                 else
                 {
-                    string msg = "{0} Quit the Game, if you are Ready we will rematch game for you!"
+                    string msg = "{0} 退出了房间，如果你已经准备，将重新为您匹配房间!"
                         .FormatStr(player.name);
                     _p.SendMsg(msg);
                 }
@@ -314,7 +314,7 @@ namespace RD.ZJH
 
         public void SendTurnCD(int cd)
         {
-            string msg = whoseTurn.name + " Turn CD: " + cd;
+            string msg = whoseTurn.name + " 决策剩余时间（超时自动放弃）: " + cd;
             SendMsgToAll(msg);
         }
 
@@ -324,18 +324,18 @@ namespace RD.ZJH
             {
                 if (state == State.Ready)
                 {
-                    return "Room[{0}] Wait For Ready...".FormatStr(name);
+                    return "房间号[{0}] 等待玩家准备(ready)...".FormatStr(name);
                 }
                 else if (state == State.Gaming)
                 {
-                    return "TURN: {0}\nMONEY POOL ** {1} **"
+                    return "轮到 {0} 决策\n狗牌池状态-> {1} "
                     .FormatStr(whoseTurn.name, moneyPool.status);
                 }
                 else if (state == State.Dismiss)
                 {
-                    return "Room[{0}] Dismiss.".FormatStr(name);
+                    return "房间号[{0}] 已解散.".FormatStr(name);
                 }
-                return "error status.";
+                return "错误状态.";
             }
         }
 
@@ -394,7 +394,7 @@ namespace RD.ZJH
         {
             get
             {
-                return "TOTAL: {0}   PRICE: {1}".FormatStr(total, price);
+                return "总数: {0}   当前狗牌: {1}".FormatStr(total, price);
             }
         }
     }

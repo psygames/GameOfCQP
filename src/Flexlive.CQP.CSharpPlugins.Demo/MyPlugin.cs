@@ -94,6 +94,7 @@ namespace Flexlive.CQP.CSharpPlugins.Demo
         {
             // 处理讨论组消息。
             // CQX.SendDiscussMessage(fromDiscuss, String.Format("[{0}]{1}你发的讨论组消息是：{2}", CQX.ProxyType, CQX.CQCode_At(fromQQ), msg));
+            plugin.PrivateMessage(subType, sendTime, fromQQ, msg, font);
         }
 
         /// <summary>

@@ -80,9 +80,9 @@ namespace RD.ZJH
             get
             {
                 if (type == Type.BIG_JK)
-                    return "BIG_JK";
+                    return "大王";
                 else if (type == Type.SMALL_JK)
-                    return "SMALL_JK";
+                    return "小王";
                 else
                 {
                     return typeImgCode + num.ToString().Trim('_');

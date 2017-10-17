@@ -9,7 +9,7 @@ namespace RD.ZJH
     {
         public List<string> m_waitings = new List<string>();
         public List<List<string>> m_matcheds = new List<List<string>>();
-        private const int MATCH_COUNT_MAX = 3;
+        private const int MATCH_COUNT_MAX = 4;
         private const int MATCH_COUNT_MIN = 2;
         public const float USE_MATCH_MIN_CD = 60;
 
@@ -19,6 +19,7 @@ namespace RD.ZJH
         {
             if (!m_waitings.Contains(id))
                 m_waitings.Add(id);
+            m_useMinCD = 60;
         }
 
         public void Update()
@@ -29,7 +30,6 @@ namespace RD.ZJH
         private void CheckMatch()
         {
             m_useMinCD -= Time.delta;
-
             CheckMatch(MATCH_COUNT_MAX);
             if (m_useMinCD <= 0)
             {
@@ -48,7 +48,6 @@ namespace RD.ZJH
                     m_waitings.RemoveAt(0);
                 }
                 m_matcheds.Add(matched);
-                m_useMinCD = 60;
             }
         }
 
