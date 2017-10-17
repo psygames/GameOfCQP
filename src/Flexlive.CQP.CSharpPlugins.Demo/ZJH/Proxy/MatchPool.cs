@@ -30,19 +30,19 @@ namespace RD.ZJH
         private void CheckMatch()
         {
             m_useMinCD -= Time.delta;
-            CheckMatch(MATCH_COUNT_MAX);
+            CheckMatch(MATCH_COUNT_MAX, MATCH_COUNT_MAX);
             if (m_useMinCD <= 0)
             {
-                CheckMatch(MATCH_COUNT_MIN);
+                CheckMatch(MATCH_COUNT_MIN, MATCH_COUNT_MAX);
             }
         }
 
-        private void CheckMatch(int count)
+        private void CheckMatch(int min, int max)
         {
-            while (m_waitings.Count >= count)
+            while (m_waitings.Count >= min)
             {
                 var matched = new List<string>();
-                for (int i = 0; i < count; i++)
+                for (int i = 0; i < max && m_waitings.Count > 0; i++)
                 {
                     matched.Add(m_waitings[0]);
                     m_waitings.RemoveAt(0);
