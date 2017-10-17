@@ -292,7 +292,7 @@ namespace RD.ZJH
                 Msg msg = msgQueue.Dequeue();
                 // msg.msg = rand.Next(100, 999) + "\n" + msg.msg;
                 CQX.SendPrivateMessage(long.Parse(msg.playerID), msg.msg);
-                m_lastSend = Time.current;
+                m_lastSend = Time.current + rand.Next(0, 3) * MIN_SEND_INTERVAL * 0.1f;
             }
         }
 
