@@ -157,7 +157,7 @@ namespace RD.ZJH
             {
                 for (int i = 0; i < sortCards.Count - 1; i++)
                 {
-                    if (cards[i].num - cards[i + 1].num != 1)
+                    if (sortCards[i].num - sortCards[i + 1].num != 1)
                     {
                         return false;
                     }
@@ -172,7 +172,7 @@ namespace RD.ZJH
             {
                 for (int i = 0; i < sortCards.Count - 1; i++)
                 {
-                    if (cards[i].num == cards[i + 1].num)
+                    if (sortCards[i].num == sortCards[i + 1].num)
                     {
                         return true;
                     }
@@ -195,9 +195,9 @@ namespace RD.ZJH
             {
                 for (int i = 0; i < sortCards.Count - 1; i++)
                 {
-                    if (cards[i].num == cards[i + 1].num)
+                    if (sortCards[i].num == sortCards[i + 1].num)
                     {
-                        return cards[i].id;
+                        return sortCards[i].id;
                     }
                 }
                 return 0;

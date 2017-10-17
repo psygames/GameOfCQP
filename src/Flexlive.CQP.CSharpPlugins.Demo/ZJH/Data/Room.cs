@@ -99,6 +99,7 @@ namespace RD.ZJH
             if (whoseTurn != from || to == null || to.isDroped || from.money < cost)
                 return;
 
+            moneyPool.PK(fromID);
             bool isWin = from.PK(to);
             if (isWin) to.Drop();
             else from.Drop();
