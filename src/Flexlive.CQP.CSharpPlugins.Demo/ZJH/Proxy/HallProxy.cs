@@ -86,7 +86,8 @@ namespace RD.ZJH
                 int maxCount = 10;
                 int rank = 1;
                 GetPlayerMoney(playerID);
-                foreach (var pid in playerMoneyDic.Keys)
+
+                foreach (var pid in sortedPlayerMoneyDic.Keys)
                 {
                     var pname = GetName(pid);
                     rply += "{0}.  {1}  狗牌: {2}\n".FormatStr(rank++, pname, GetPlayerMoney(pid));
@@ -210,6 +211,21 @@ namespace RD.ZJH
 
 
 
+
+        public Dictionary<string, int> sortedPlayerMoneyDic
+        {
+            get
+            {
+                Dictionary<string, int> dic = new Dictionary<string, int>();
+                List<KeyValuePair<string, int>> kvs = new List<KeyValuePair<string, int>>();
+                foreach (var kv in playerMoneyDic)
+                    kvs.Add(kv);
+                kvs.Sort((a, b) => { return b.Value.CompareTo(a.Value); });
+                foreach (var kv in kvs)
+                    dic.Add(kv.Key, kv.Value);
+                return dic;
+            }
+        }
 
         private static Dictionary<string, int> playerMoneyDic = new Dictionary<string, int>();
         public static int GetPlayerMoney(string playerID)

@@ -11,7 +11,7 @@ namespace RD.ZJH
         public List<List<string>> m_matcheds = new List<List<string>>();
         private const int MATCH_COUNT_MAX = 4;
         private const int MATCH_COUNT_MIN = 2;
-        public const float USE_MATCH_MIN_CD = 60;
+        public const float USE_MATCH_MIN_CD = 30;
 
         private float m_useMinCD = USE_MATCH_MIN_CD;
 

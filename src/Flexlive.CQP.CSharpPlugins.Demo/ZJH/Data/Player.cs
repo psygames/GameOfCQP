@@ -72,7 +72,7 @@ namespace RD.ZJH
                 string msg = "";
                 foreach (var card in sortCards)
                 {
-                    msg += "[{0}] ".FormatStr(card.title);
+                    msg += "{0}   ".FormatStr(card.title);
                 }
                 return msg;
             }
@@ -88,7 +88,7 @@ namespace RD.ZJH
                     return "序号.{0}, {1}, 狗牌: {2}".FormatStr(num, name, money);
                 else if (room.state == Room.State.Gaming)
                     if (isDroped)
-                        return "序号.{0}, {1}, 狗牌: {2}  已弃牌!".FormatStr(num, name, money);
+                        return "序号.{0}, {1}, 狗牌: {2}  【已放弃】".FormatStr(num, name, money);
                     else
                         return "序号.{0}, {1}, 狗牌: {2}".FormatStr(num, name, money);
                 return "";
@@ -100,7 +100,7 @@ namespace RD.ZJH
             get
             {
                 if (room.state == Room.State.Gaming)
-                    return "手牌:{0}".FormatStr(cardsMsg);
+                    return "手牌: {0}".FormatStr(cardsMsg);
                 return "";
             }
         }
