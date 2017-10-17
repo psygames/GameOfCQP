@@ -78,6 +78,7 @@ namespace Flexlive.CQP.CSharpPlugins.Demo
                 groupMember.GroupCard, groupMember.JoinTime, groupMember.LastSpeakingTime, CQX.ProxyType));
             CQX.SendGroupMessage(fromGroup, String.Format("[{0}]{1}你发的群消息是：{2}", CQX.ProxyType, CQX.CQCode_At(fromQQ), msg));
             */
+            plugin.PrivateMessage(subType, sendTime, fromQQ, msg, font);
         }
 
         /// <summary>

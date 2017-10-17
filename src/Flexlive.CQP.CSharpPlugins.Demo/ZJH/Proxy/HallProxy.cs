@@ -80,13 +80,33 @@ namespace RD.ZJH
             {
                 Join(playerID);
             }
+            else if (msg == "rank")
+            {
+                var rply = "排行榜：\n";
+                int maxCount = 10;
+                int rank = 1;
+                GetPlayerMoney(playerID);
+                foreach (var pid in playerMoneyDic.Keys)
+                {
+                    var pname = GetName(pid);
+                    rply += "排行.{0} : {1}  狗牌: {2}\n".FormatStr(rank++, pname, GetPlayerMoney(pid));
+                    if (rank >= maxCount)
+                        break;
+                }
+                rply += "你的 狗牌: {0}".FormatStr(GetPlayerMoney(playerID));
+                SendMsgTo(playerID, rply);
+            }
 
             if (!HasPlayer(playerID))
             {
                 if (msg == "help" || msg == "?")
                 {
-                    string hp = "zjh --- 炸金花";
+                    string hp = "zjh --- 炸金花\nrank --- 狗牌榜\niamsx --- 免费狗牌";
                     SendMsgTo(playerID, hp);
+                }
+                else if (msg == "iamsx")
+                {
+                    AskForMoney(playerID);
                 }
                 return;
             }
@@ -94,9 +114,9 @@ namespace RD.ZJH
             // ZJH HELP
             if (msg == "?" || msg == "help")
             {
-                string hp = "ready --- 准备 \nfollow *[money] --- 跟\n"
-                    + "drop --- 弃牌\npk [NO.] --- 比牌\n"
-                    + "(ps:*[xxx] 括号内为参数名，*表示参数可不填)";
+                string hp = "ready --- 准备 \nfollow(fl) *[狗牌数量] --- 跟\n"
+                    + "drop(dp) --- 弃牌\npk [序号] --- 比牌\n"
+                    + "（ps:*[xxx] --- []内为参数名, *表示参数可不填）";
                 SendMsgTo(playerID, hp);
             }
 
@@ -153,7 +173,7 @@ namespace RD.ZJH
             }
 
             matchPool.Add(playerID);
-            SendMsgTo(playerID, "wait for matching...");
+            SendMsgTo(playerID, "等待匹配中...");
         }
 
 
@@ -218,6 +238,19 @@ namespace RD.ZJH
             }
         }
 
+        public static void AskForMoney(string playerID)
+        {
+            int value = 500;
+            if (!playerMoneyDic.ContainsKey(playerID))
+            {
+                playerMoneyDic.Add(playerID, value);
+            }
+            else if (playerMoneyDic[playerID] <= 100)
+            {
+                playerMoneyDic[playerID] = value;
+            }
+        }
+
         public class Msg
         {
             public string playerID;
@@ -235,17 +268,19 @@ namespace RD.ZJH
         }
 
         private float m_lastSend = 0;
-        private float MIN_SEND_INTERVAL = 0.2f;
+        private float MIN_SEND_INTERVAL = 1f;
         private void UpdateSendMsg()
         {
             if (Time.current - m_lastSend > MIN_SEND_INTERVAL && msgQueue.Count > 0)
             {
                 Msg msg = msgQueue.Dequeue();
+                msg.msg = rand.Next(100, 999) + "\n" + msg.msg;
                 CQX.SendPrivateMessage(long.Parse(msg.playerID), msg.msg);
                 m_lastSend = Time.current;
             }
         }
 
+        Random rand = new Random();
         Dictionary<string, string> m_nameCached = new Dictionary<string, string>();
         public string GetName(string playerID)
         {

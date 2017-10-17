@@ -77,6 +77,11 @@ namespace RD.ZJH
         {
             if (whoseTurn.id != playerID || whoseTurn.money < price)
                 return;
+            if (price <= moneyPool.price)
+                price = -1;
+            else if (price >= MoneyPool.MAX_PRICE)
+                price = MoneyPool.MAX_PRICE;
+
             moneyPool.Follow(playerID, price);
             SendFollow(whoseTurn, moneyPool.price);
             TurnNext();
@@ -341,6 +346,7 @@ namespace RD.ZJH
     public class MoneyPool
     {
         const int BASE_PRICE = 1;
+        public const int MAX_PRICE = 100;
         public int price { get; private set; }
         public int total { get; private set; }
 
