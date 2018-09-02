@@ -1,11 +1,11 @@
-﻿using Flexlive.CQP.Framework;
+using Flexlive.CQP.Framework;
 using System;
 
 namespace RD.ZJH
 {
     public class ZJHPluging
     {
-        public void PrivateMessage(int subType, int sendTime, long fromQQ, string msg, int font)
+        public void OnMessage(int subType, int sendTime, long fromQQ, string msg, int font)
         {
             // 处理私聊消息。
             // CQX.SendPrivateMessage(fromQQ, String.Format("[{0}]你发的私聊消息是：{1}", CQX.ProxyType, msg));

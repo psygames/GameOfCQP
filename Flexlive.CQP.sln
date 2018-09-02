@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharpPlugins", "CSharpPlugins", "{0CB0267E-7447-497F-ABB7-DB45CF5A4EF4}"
 EndProject
@@ -33,5 +33,8 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{5D0BDC2D-DA77-4B06-A29C-2476C5BAA113} = {0CB0267E-7447-497F-ABB7-DB45CF5A4EF4}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {662AE7AA-498F-400C-A58D-A04529EC2CAC}
 	EndGlobalSection
 EndGlobal

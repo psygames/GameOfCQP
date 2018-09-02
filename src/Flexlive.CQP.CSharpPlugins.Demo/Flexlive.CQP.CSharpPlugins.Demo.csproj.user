@@ -8,9 +8,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <StartAction>Program</StartAction>
-    <StartProgram>G:\git\GameOfCQP\Publish\Flexlive.CQP.CSharpProxy.exe</StartProgram>
-    <StartWorkingDirectory>
-    </StartWorkingDirectory>
+    <StartProgram>D:\workspace\git\GameOfCQP\Publish\Flexlive.CQP.CSharpProxy.exe</StartProgram>
+    <StartWorkingDirectory>D:\workspace\git\GameOfCQP\Publish\CSharpPlugins\</StartWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup>
     <ProjectView>ShowAllFiles</ProjectView>

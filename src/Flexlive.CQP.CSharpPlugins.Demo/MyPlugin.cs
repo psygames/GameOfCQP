@@ -1,4 +1,4 @@
-﻿using Flexlive.CQP.Framework;
+using Flexlive.CQP.Framework;
 using System;
 
 namespace Flexlive.CQP.CSharpPlugins.Demo
@@ -16,20 +16,21 @@ namespace Flexlive.CQP.CSharpPlugins.Demo
             // 此方法用来初始化插件名称、版本、作者、描述等信息，
             // 不要在此添加其它初始化代码，插件初始化请写在Startup方法中。
 
-            this.Name = "Flexlive官方示例插件";
+            this.Name = "黄鸭系统";
             this.Version = new Version("1.0.0.0");
-            this.Author = "Flexlive";
-            this.Description = "基于Flexlive版 酷Q C#开方框架的酷Q插件示例。";
+            this.Author = "黄鸭";
+            this.Description = "基于Flexlive版 酷Q C#开方框架的黄鸭辅助系统。";
         }
 
-        RD.ZJH.ZJHPluging plugin = new RD.ZJH.ZJHPluging();
+        RD.CSDNPlugin plugin = new RD.CSDNPlugin();
         /// <summary>
         /// 应用启动，完成插件线程、全局变量等自身运行所必须的初始化工作。
         /// </summary>
         public override void Startup()
         {
             //完成插件线程、全局变量等自身运行所必须的初始化工作。
-            RD.ZJH.TimerLogic.instance.Init();
+            //RD.ZJH.TimerLogic.instance.Init();
+            plugin.Init();
         }
 
         /// <summary>
@@ -54,8 +55,8 @@ namespace Flexlive.CQP.CSharpPlugins.Demo
         {
             // 处理私聊消息。
             // CQX.SendPrivateMessage(fromQQ, String.Format("[{0}]你发的私聊消息是：{1}", CQX.ProxyType, msg));
-            
-            plugin.PrivateMessage(subType, sendTime, fromQQ, msg, font);
+
+            plugin.OnMessage(21, subType, sendTime, 0, fromQQ, msg, font);
         }
 
         /// <summary>
@@ -78,7 +79,7 @@ namespace Flexlive.CQP.CSharpPlugins.Demo
                 groupMember.GroupCard, groupMember.JoinTime, groupMember.LastSpeakingTime, CQX.ProxyType));
             CQX.SendGroupMessage(fromGroup, String.Format("[{0}]{1}你发的群消息是：{2}", CQX.ProxyType, CQX.CQCode_At(fromQQ), msg));
             */
-            plugin.PrivateMessage(subType, sendTime, fromQQ, msg, font);
+            plugin.OnMessage(2, subType, sendTime, fromGroup, fromQQ, msg, font);
         }
 
         /// <summary>
@@ -94,7 +95,7 @@ namespace Flexlive.CQP.CSharpPlugins.Demo
         {
             // 处理讨论组消息。
             // CQX.SendDiscussMessage(fromDiscuss, String.Format("[{0}]{1}你发的讨论组消息是：{2}", CQX.ProxyType, CQX.CQCode_At(fromQQ), msg));
-            plugin.PrivateMessage(subType, sendTime, fromQQ, msg, font);
+            plugin.OnMessage(4, subType, sendTime, fromDiscuss, fromQQ, msg, font);
         }
 
         /// <summary>
