@@ -47,33 +47,33 @@ namespace RD
             // https://download.csdn.net/download/s15100007883/10406823
             var head = "https://download.csdn.net/download/";
 
-            if (msg.Contains(head))
+            if (!msg.Contains(head))
+                return;
+
+            var sub = msg.GetAfter(head);
+            var st = sub.IndexOf("/");
+            var end = sub.Length;
+            if (st < 0)
+                return;
+
+            for (int i = 0; i < 12 && i + st + 1 < sub.Length; i++)
             {
-                var sub = msg.GetAfter(head);
-                var end = sub.IndexOf("/");
-                if (end < 0)
-                    return;
-
-
-                for (int i = 0; i < 12 && i + end + 1 < sub.Length; i++)
+                var num = sub[i + st + 1];
+                if (num < '0' || num > '9')
                 {
-                    var num = sub[i + end + 1];
-                    if (num < '0' || num > '9')
-                    {
-                        end = i + end + 1;
-                        break;
-                    }
+                    end = i + st + 1;
+                    break;
                 }
-
-                var url = head + sub.Substring(0, end);
-                PipeMsg pMsg = new PipeMsg();
-                pMsg.fromGroup = groupID;
-                pMsg.fromUrl = url;
-                pMsg.fromQQType = type;
-                pMsg.fromQQ = fromQQ;
-                var s_pMsg = JsonConvert.SerializeObject(pMsg);
-                pipeclient.Send(s_pMsg);
             }
+
+            var url = head + sub.Substring(0, end);
+            PipeMsg pMsg = new PipeMsg();
+            pMsg.fromGroup = groupID;
+            pMsg.fromUrl = url;
+            pMsg.fromQQType = type;
+            pMsg.fromQQ = fromQQ;
+            var s_pMsg = JsonConvert.SerializeObject(pMsg);
+            pipeclient.Send(s_pMsg);
         }
 
 
