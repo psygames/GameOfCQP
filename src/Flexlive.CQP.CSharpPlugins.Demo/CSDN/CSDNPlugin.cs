@@ -44,9 +44,28 @@ namespace RD
             // CQX.SendPrivateMessage(fromQQ, String.Format("[{0}]你发的私聊消息是：{1}", CQX.ProxyType, msg));
             // var img = CQX.CQCode_Image(@"C:\Users\Yin\Desktop\图\2015-12-25\修改体验\hint_get_diamond_big.png");
             // CQX.SendPrivateMessage(fromQQ, img);
-            if (msg.StartsWith("下载"))
+            // https://download.csdn.net/download/s15100007883/10406823
+            var head = "https://download.csdn.net/download/";
+
+            if (msg.Contains(head))
             {
-                var url = "http" + msg.GetAfter("http").TrimEnd();
+                var sub = msg.GetAfter(head);
+                var end = sub.IndexOf("/");
+                if (end < 0)
+                    return;
+
+
+                for (int i = 0; i < 12 && i + end + 1 < sub.Length; i++)
+                {
+                    var num = sub[i + end + 1];
+                    if (num < '0' || num > '9')
+                    {
+                        end = i + end + 1;
+                        break;
+                    }
+                }
+
+                var url = head + sub.Substring(0, end);
                 PipeMsg pMsg = new PipeMsg();
                 pMsg.fromGroup = groupID;
                 pMsg.fromUrl = url;
